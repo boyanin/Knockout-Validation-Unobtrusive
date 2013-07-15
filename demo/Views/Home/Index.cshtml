@@ -1,0 +1,50 @@
+﻿@model KnockoutUnobtrusive.Models.MyModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Index</h2>
+
+@Html.LabelFor(m => m.Name)
+@Html.TextBoxFor(m => m.Name, new { data_bind = "value: name"})<br />
+
+@Html.LabelFor(m => m.Age)
+@Html.TextBoxFor(m => m.Age, new { data_bind = "value: age"})<br />
+
+@Html.LabelFor(m => m.Phone)
+@Html.TextBoxFor(m => m.Phone, new { data_bind = "value: phone"})<br />
+
+@Html.LabelFor(m => m.IsEducated)
+@Html.CheckBoxFor(m => m.IsEducated, new { data_bind = "checked: isEducated"})<br />
+
+@Html.LabelFor(m => m.ExtraName)
+@Html.TextBoxFor(m => m.ExtraName, new { data_bind = "value: extra.name"})<br />
+
+@Html.LabelFor(m => m.Date)
+@Html.TextBoxFor(m => m.Date, new { data_bind = "value: extra.date"})<br />
+
+<input type="button" value="Submit" data-bind="validatesubmit: $data, click: function() { alert('done'); }"/>
+
+<script>
+    ko.validation.init({
+        grouping: {
+            deep: true
+        }
+    });
+
+    $(function () {
+        var MyJsModel = function () {
+            this.name = ko.observable();
+            this.age = ko.observable();
+            this.phone = ko.observable();
+            this.isEducated = ko.observable(false);
+            this.extra = {
+                name: ko.observable(),
+                date: ko.observable()
+            };
+        };
+
+        var vm = new MyJsModel();
+        ko.applyBindings(vm);
+    });
+</script>
