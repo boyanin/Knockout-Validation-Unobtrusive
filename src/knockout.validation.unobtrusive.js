@@ -51,6 +51,80 @@
 
     ko.validation.unobtrusive.DefaultRuleProvider = function () {
         return {
+            adapters: {
+                required: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['required']) {
+                        validationExtObj.required = {
+                            params: true,
+                            message: validationAttributes['required']
+                        };
+                    }
+                },
+                number: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['number']) {
+                        validationExtObj.number = {
+                            params: true,
+                            message: validationAttributes['number']
+                        };
+                    }
+                },
+                range: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['range'] && validationAttributes['range-max'] && validationAttributes['range-min']) {
+                        validationExtObj.min = {
+                            params: parseInt(validationAttributes['range-min']),
+                            message: validationAttributes['range']
+                        };
+                        validationExtObj.max = {
+                            params: parseInt(validationAttributes['range-max']),
+                            message: validationAttributes['range']
+                        };
+                    }
+                },
+                regex: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['regex'] && validationAttributes['regex-pattern']) {
+                        validationExtObj.pattern = {
+                            params: validationAttributes['regex-pattern'],
+                            message: validationAttributes['regex']
+                        };
+                    }
+                },
+                date: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['date']) {
+                        validationExtObj.date = {
+                            params: true,
+                            message: validationAttributes['date']
+                        };
+                    }
+                },
+                equalTo: function (validationExtObj, validationAttributes, viewModel) {
+                    if (validationAttributes['equalto'] && validationAttributes['equalto-other']) {
+                        var other = validationAttributes['equalto-other'].replace('*.', '');
+                        var propCtx = utils.getPropertyContext(viewModel, other[0].toLowerCase() + other.substring(1));
+                        if (utils.isNotNullObject(propCtx)) {
+                            validationExtObj.equal = {
+                                params: propCtx.parentObj[propCtx.propertyName],
+                                message: validationAttributes['equalto']
+                            };
+                        }
+                    }
+                },
+                length: function (validationExtObj, validationAttributes) {
+                    if (validationAttributes['length']) {
+                        if (validationAttributes['length-min']) {
+                            validationExtObj.minLength = {
+                                params: parseInt(validationAttributes['length-min']),
+                                message: validationAttributes['length']
+                            };
+                        }
+                        if (validationAttributes['length-max']) {
+                            validationExtObj.maxLength = {
+                                params: parseInt(validationAttributes['length-max']),
+                                message: validationAttributes['length']
+                            };
+                        }
+                    }
+                },
+            },
             //
             // Gets the string containing the binding instructions from a
             // HTML element
@@ -66,50 +140,10 @@
                 var validationAttributes = this.getValidationAttributes(element);
                 var validationExtObj = {};
 
-                if (validationAttributes['required']) {
-                    validationExtObj.required = {
-                        params: true,
-                        message: validationAttributes['required']
-                    };
+                for (var adapter in this.adapters) {
+                    this.adapters[adapter](validationExtObj, validationAttributes, viewModel);
                 }
-                if (validationAttributes['number']) {
-                    validationExtObj.number = {
-                        params: true,
-                        message: validationAttributes['number']
-                    };
-                }
-                if (validationAttributes['range'] && validationAttributes['range-max'] && validationAttributes['range-min']) {
-                    validationExtObj.min = {
-                        params: parseInt(validationAttributes['range-min']),
-                        message: validationAttributes['range']
-                    };
-                    validationExtObj.max = {
-                        params: parseInt(validationAttributes['range-max']),
-                        message: validationAttributes['range']
-                    };
-                }
-                if (validationAttributes['regex'] && validationAttributes['regex-pattern']) {
-                    validationExtObj.pattern = {
-                        params: validationAttributes['regex-pattern'],
-                        message: validationAttributes['regex']
-                    };
-                }
-                if (validationAttributes['date']) {
-                    validationExtObj.date = {
-                        params: true,
-                        message: validationAttributes['date']
-                    };
-                }
-                if (validationAttributes['equalto'] && validationAttributes['equalto-other']) {
-                    var other = validationAttributes['equalto-other'].replace('*.', '');
-                    var propCtx = utils.getPropertyContext(viewModel, other[0].toLowerCase() + other.substring(1));
-                    if (utils.isNotNullObject(propCtx)) {
-                        validationExtObj.equal = {
-                            params: propCtx.parentObj[propCtx.propertyName],
-                            message: validationAttributes['equalto']
-                        };
-                    }
-                }
+
                 return validationExtObj;
             },
 
