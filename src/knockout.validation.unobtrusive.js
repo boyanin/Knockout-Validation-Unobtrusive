@@ -202,6 +202,9 @@
                     var propCtx = utils.getPropertyContext(viewModel, ko.utils.stringTrim(binding.value));
                     if (utils.isNotNullObject(propCtx)) {
                         propCtx.parentObj[propCtx.propertyName] = propCtx.parentObj[propCtx.propertyName].extend(validationExtObj);
+                        if (unobtrusive.onObservableExtended) {
+                            unobtrusive.onObservableExtended(propCtx.parentObj[propCtx.propertyName], element, viewModel);
+                        }
                         break;
                     }
                 }
