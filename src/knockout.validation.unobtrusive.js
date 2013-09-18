@@ -197,7 +197,7 @@
             var bindings = ko.expressionRewriting.parseObjectLiteral(ruleProvider.getBindingString(element));
             var allowedBindings = ko.validation.unobtrusive.getAllowedBindings();
             for (var i = 0; i < allowedBindings.length; i++) {
-                var binding = ko.utils.arrayFirst(bindings, function (b) { return b.key === allowedBindings[i]; });
+                var binding = ko.utils.arrayFirst(bindings, function (b) { return ko.utils.stringTrim(b.key) === allowedBindings[i]; });
                 if (binding) {
                     var propCtx = utils.getPropertyContext(viewModel, ko.utils.stringTrim(binding.value));
                     if (utils.isNotNullObject(propCtx)) {
