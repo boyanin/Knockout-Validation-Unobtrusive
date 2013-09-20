@@ -35,7 +35,7 @@
                 if (typeof currentObj !== "object")
                     return false;
 
-                currentObj = currentObj[values[i]];
+                currentObj = currentObj[values[i].replace('()', '')];
             }
             return {
                 propertyName: values[values.length - 1],
@@ -201,9 +201,10 @@
                 if (binding) {
                     var propCtx = utils.getPropertyContext(viewModel, ko.utils.stringTrim(binding.value));
                     if (utils.isNotNullObject(propCtx)) {
-                        propCtx.parentObj[propCtx.propertyName] = propCtx.parentObj[propCtx.propertyName].extend(validationExtObj);
+                        var parentValue = ko.utils.unwrapObservable(propCtx.parentObj);
+                        parentValue[propCtx.propertyName] = parentValue[propCtx.propertyName].extend(validationExtObj);
                         if (unobtrusive.onObservableExtended) {
-                            unobtrusive.onObservableExtended(propCtx.parentObj[propCtx.propertyName], element, viewModel);
+                            unobtrusive.onObservableExtended(parentValue[propCtx.propertyName], element, viewModel);
                         }
                         break;
                     }
