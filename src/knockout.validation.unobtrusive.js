@@ -230,7 +230,9 @@
                 if (!obs.isValid()) {
                     obs.errors.showAllMessages();
                     e.stopImmediatePropagation();
+					return false;
                 }
+				return true;
             });
         }
     };
